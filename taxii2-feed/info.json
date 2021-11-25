@@ -1,0 +1,319 @@
+{
+  "name": "taxii2-feed",
+  "label": "TAXII2 Threat Intel Feed",
+  "description": "TAXII2 Threat Intelligence Feed Integration",
+  "publisher": "Fortinet",
+  "cs_approved": true,
+  "cs_compatible": true,
+  "version": "1.0.0",
+  "category": "Threat Intelligence",
+  "icon_small_name": "small.png",
+  "icon_large_name": "large.png",
+  "help_online": "",
+  "configuration": {
+    "fields": [
+      {
+        "title": "Server URL",
+        "required": true,
+        "editable": true,
+        "visible": true,
+        "type": "text",
+        "name": "server_url",
+        "value": "https://limo.anomali.com/api/v1/taxii2"
+      },
+      {
+        "title": "Authentication Type",
+        "name": "auth_type",
+        "visible": true,
+        "required": true,
+        "editable": true,
+        "type": "select",
+        "options": [
+          "Basic Authentication",
+          "SSL Two-Way Certificate"
+        ],
+        "onchange": {
+          "Basic Authentication": [
+            {
+              "title": "User Name / API Key",
+              "required": true,
+              "editable": true,
+              "visible": true,
+              "type": "text",
+              "name": "username"
+            },
+            {
+              "title": "Password",
+              "required": true,
+              "editable": true,
+              "visible": true,
+              "type": "password",
+              "name": "password"
+            }
+          ],
+          "SSL Two-Way Certificate": [
+            {
+              "title": "Client Certificate",
+              "name": "client_certificate",
+              "type": "textarea",
+              "visible": true,
+              "editable": true,
+              "required": true,
+              "tooltip": "Add a client certificate file as text to connect to the TAXII Client.",
+              "description": "Add a client certificate file as text to connect to the TAXII Client."
+            },
+            {
+              "title": "Certificate Key",
+              "name": "key_certificate",
+              "type": "textarea",
+              "visible": true,
+              "editable": true,
+              "required": true,
+              "tooltip": "Add a key certificate file as text to connect to the TAXII Client.",
+              "description": "Add a key certificate file as text to connect to the TAXII Client."
+            }
+          ]
+        },
+        "tooltip": "Time stamp of when the indicator was last seen in STAXX. Date can be specified in Date format or Relative Time Unit format.",
+        "description": "Time stamp of when the indicator was last seen in STAXX. Date can be specified in Date format or Relative Time Unit format."
+      },
+      {
+        "title": "Verify SSL",
+        "required": false,
+        "editable": true,
+        "visible": true,
+        "type": "checkbox",
+        "name": "verify_ssl",
+        "value": true
+      }
+    ]
+  },
+  "operations": [
+    {
+      "operation": "get_collections",
+      "title": "Get Collections",
+      "description": "Returns a list of public/private/shared collection resources which users have the access.",
+      "category": "investigation",
+      "annotation": "get_collections",
+      "output_schema": {
+        "collections": [
+          {
+            "id": "",
+            "title": "",
+            "can_read": "",
+            "can_write": "",
+            "media_types": [
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "title": "Fetch Collection By",
+          "name": "collection_type",
+          "visible": true,
+          "required": true,
+          "editable": true,
+          "type": "select",
+          "options": [
+            "Collection ID",
+            "Offset and Limit"
+          ],
+          "onchange": {
+            "Collection ID": [
+              {
+                "title": "Collection ID",
+                "name": "collectionID",
+                "visible": true,
+                "required": false,
+                "editable": true,
+                "type": "text",
+                "tooltip": "Returns general information about the collection, such as id, title, description, can_read, can_write and media_types.",
+                "description": "Returns general information about the collection, such as id, title, description, can_read, can_write and media_types."
+              }
+            ],
+            "Offset and Limit": [
+              {
+                "title": "Offset",
+                "name": "offset",
+                "type": "text",
+                "visible": true,
+                "editable": true,
+                "required": true,
+                "placeholder": "0",
+                "value": "0",
+                "tooltip": "From which offset you want to fetch collections",
+                "description": "From which offset you want to fetch collections"
+              },
+              {
+                "title": "Limit",
+                "name": "limit",
+                "type": "text",
+                "visible": true,
+                "editable": true,
+                "required": false,
+                "placeholder": "1000",
+                "tooltip": "Upper limit of collections to fetch.",
+                "description": "Upper limit of collections to fetch."
+              }
+            ]
+          },
+          "description": "Select the the fetch type."
+        }
+      ],
+      "enabled": true
+    },
+    {
+      "operation": "get_objects_by_collection_id",
+      "title": "Fetch Indicators",
+      "description": "Retrieve all available objects in a Collection.",
+      "category": "investigation",
+      "annotation": "get_objects_by_collection_id",
+      "api_output_schema": "get_output_schema",
+      "output_schema": {},
+      "parameters": [
+        {
+          "title": "Collection ID",
+          "name": "collectionID",
+          "visible": true,
+          "required": true,
+          "editable": true,
+          "type": "text",
+          "tooltip": "Returns general information about the collection, such as id, title, description, can_read, can_write and media_types.",
+          "description": "Returns general information about the collection, such as id, title, description, can_read, can_write and media_types."
+        },
+        {
+          "title": "Created After",
+          "name": "added_after",
+          "visible": true,
+          "required": false,
+          "editable": true,
+          "type": "datetime",
+          "tooltip": "Filter the result set to only include the items added after the specified time.",
+          "description": "Filter the result set to only include the items added after the specified time."
+        },
+        {
+          "title": "Save Response in File",
+          "name": "file_response",
+          "visible": true,
+          "required": false,
+          "editable": true,
+          "type": "checkbox",
+          "onchange": {
+            "true": [
+              {
+                "title": "Filename",
+                "name": "filename",
+                "type": "text",
+                "visible": true,
+                "editable": true,
+                "required": false,
+                "placeholder": "Eg. demo.json",
+                "tooltip": "The file will be created under /tmp"
+              }
+            ]
+          },
+          "tooltip": "If check then save the response in File else in JSON",
+          "description": "Specify the response field, If check then save the response in File else in JSON"
+        },
+        {
+          "title": "Confidence",
+          "name": "confidence",
+          "type": "integer",
+          "tooltip": "Default Confidence score to be set for the feeds",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "value": 50,
+          "validation": {
+            "minlength": 0,
+            "maxlength": 100
+          },
+          "minimum": 0,
+          "maximum": 100
+        },
+        {
+          "title": "Reputation",
+          "name": "reputation",
+          "type": "select",
+          "tooltip": "Default Reputation to be set for the feeds",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "options": [
+            "Good",
+            "Suspicious",
+            "Malicious",
+            "No Reputation Available",
+            "TBD"
+          ],
+          "value": [
+            "Suspicious"
+          ]
+        },
+        {
+          "title": "TLP",
+          "name": "tlp",
+          "type": "select",
+          "tooltip": "Default TLP to be set for the feeds",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "options": [
+            "Red",
+            "Amber",
+            "Green",
+            "White"
+          ],
+          "value": [
+            "White"
+          ]
+        },
+        {
+          "title": "Maximum Age (in Days)",
+          "name": "expiry",
+          "type": "integer",
+          "required": false,
+          "editable": true,
+          "visible": true,
+          "tooltip": "Default age for the feeds. The indicator expires on 'valid_until' date unless a different expiry is specified. If an expiry is specified, the indicator will be marked expired on valid_from + expiry.",
+          "description": "Default age for the feeds. The indicator expires on 'valid_until' date unless a different expiry is specified. If an expiry is specified, the indicator will be marked expired on valid_from + expiry."
+        },
+        {
+          "title": "Offset",
+          "name": "offset",
+          "type": "text",
+          "visible": true,
+          "editable": true,
+          "required": true,
+          "placeholder": "0",
+          "value": "0",
+          "tooltip": "From which offset you want to fetch indicators",
+          "description": "From which offset you want to fetch indicators"
+        },
+        {
+          "title": "Limit",
+          "name": "limit",
+          "type": "text",
+          "visible": true,
+          "editable": true,
+          "required": false,
+          "placeholder": "1000",
+          "tooltip": "Upper limit of indicators to fetch, if not provided then fetch the full objects in specified collection.",
+          "description": "Upper limit of indicators to fetch, if not provided then fetch the full objects in specified collection."
+        }
+      ],
+      "enabled": true
+    },
+    {
+      "operation": "get_output_schema",
+      "annotation": "get_output_schema",
+      "description": "Gives the output schema based on the inputs",
+      "title": "Get Output Schema",
+      "enabled": true,
+      "visible": false,
+      "parameters": [],
+      "output_schema": {}
+    }
+  ]
+}

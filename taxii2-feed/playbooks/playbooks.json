@@ -1,0 +1,254 @@
+{
+  "type": "workflow_collections",
+  "data": [
+    {
+      "@type": "WorkflowCollection",
+      "name": "Sample - TAXII2 Threat Intel Feed - 1.0.0",
+      "description": "Sample playbooks for \"TAXII2 Threat Intel Feed\" connector. If you are planning to use any of the sample playbooks in your environment, ensure that you clone those playbooks and move them to a different collection, since the sample playbook collection gets deleted during connector upgrade and delete.",
+      "visible": true,
+      "image": "/api/3/images/5bfdf665-e79a-49fd-806e-c43ef4b4b183",
+      "uuid": "013d6377-1548-4fa7-9ca1-83a8666623e6",
+      "id": 161,
+      "createUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
+      "createDate": 1637573562,
+      "modifyUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
+      "modifyDate": 1637573562,
+      "recordTags": [],
+      "workflows": [
+        {
+          "@type": "Workflow",
+          "triggerLimit": null,
+          "name": "Fetch Indicators",
+          "aliasName": null,
+          "tag": "#TAXII2 Threat Intel Feed",
+          "description": "Retrieve all available objects in a Collection.",
+          "isActive": false,
+          "singleRecordExecution": false,
+          "remoteExecutableFlag": false,
+          "parameters": [],
+          "synchronous": false,
+          "lastModifyDate": 1637574359,
+          "collection": "/api/3/workflow_collections/013d6377-1548-4fa7-9ca1-83a8666623e6",
+          "versions": [],
+          "triggerStep": "/api/3/workflow_steps/7d6c7054-152d-4829-8735-a7c0eb3a8b84",
+          "steps": [
+            {
+              "@type": "WorkflowStep",
+              "name": "Alerts",
+              "description": null,
+              "arguments": {
+                "route": "34686e71-22fe-4019-885b-a5c50126ad52",
+                "title": "TAXII2 Threat Intel Feed: Fetch Indicators",
+                "resources": [
+                  "alerts"
+                ],
+                "inputVariables": [],
+                "step_variables": {
+                  "input": {
+                    "records": "{{vars.input.records[0]}}"
+                  }
+                },
+                "noRecordExecution": true,
+                "singleRecordExecution": false
+              },
+              "status": null,
+              "top": "30",
+              "left": "125",
+              "stepType": "/api/3/workflow_step_types/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+              "uuid": "7d6c7054-152d-4829-8735-a7c0eb3a8b84",
+              "id": 5785
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Get Collections",
+              "description": null,
+              "arguments": {
+                "name": "TAXII2 Threat Intel Feed",
+                "config": "2d5a33d4-e084-45b7-ac4c-d1556181a652",
+                "params": {
+                  "limit": "2",
+                  "offset": "0",
+                  "collectionID": "",
+                  "collection_type": "Offset and Limit",
+                  "full_collection_fetch": false
+                },
+                "version": "1.0.0",
+                "connector": "taxii2-feed",
+                "operation": "get_collections",
+                "operationTitle": "Get Collections",
+                "pickFromTenant": false,
+                "step_variables": []
+              },
+              "status": null,
+              "top": "165",
+              "left": "125",
+              "stepType": "/api/3/workflow_step_types/0bfed618-0316-11e7-93ae-92361f002671",
+              "uuid": "84961363-10cf-43c5-97d4-4cca4396ee2e",
+              "id": 5788
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Fetch Indicators",
+              "description": null,
+              "arguments": {
+                "name": "TAXII2 Threat Intel Feed",
+                "config": "2d5a33d4-e084-45b7-ac4c-d1556181a652",
+                "params": {
+                  "tlp": "Red",
+                  "limit": "2",
+                  "expiry": 90,
+                  "offset": "0",
+                  "confidence": 50,
+                  "reputation": "Good",
+                  "added_after": "",
+                  "collectionID": "{{vars.item.id}}",
+                  "file_response": ""
+                },
+                "version": "1.0.0",
+                "for_each": {
+                  "item": "{{vars.steps.Get_Collections.data.collections}}",
+                  "condition": ""
+                },
+                "connector": "taxii2-feed",
+                "operation": "get_objects_by_collection_id",
+                "operationTitle": "Fetch Indicators",
+                "pickFromTenant": false,
+                "step_variables": []
+              },
+              "status": null,
+              "top": "300",
+              "left": "125",
+              "stepType": "/api/3/workflow_step_types/0bfed618-0316-11e7-93ae-92361f002671",
+              "uuid": "7082a29b-de95-44e3-a41f-b08a36756cf2",
+              "id": 5789
+            }
+          ],
+          "routes": [
+            {
+              "@type": "WorkflowRoute",
+              "name": "Alerts -> Copy  of Get Collections",
+              "targetStep": "/api/3/workflow_steps/84961363-10cf-43c5-97d4-4cca4396ee2e",
+              "sourceStep": "/api/3/workflow_steps/7d6c7054-152d-4829-8735-a7c0eb3a8b84",
+              "label": null,
+              "isExecuted": false,
+              "uuid": "56d22736-6653-44df-a973-dc7cf54c58d8"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Copy  of Get Collections -> Fetch Indicators",
+              "targetStep": "/api/3/workflow_steps/7082a29b-de95-44e3-a41f-b08a36756cf2",
+              "sourceStep": "/api/3/workflow_steps/84961363-10cf-43c5-97d4-4cca4396ee2e",
+              "label": null,
+              "isExecuted": false,
+              "uuid": "37125789-61c9-438f-a7b4-9d55c819ea3e"
+            }
+          ],
+          "priority": null,
+          "uuid": "20064d48-c19e-400f-9ec8-209699f6b345",
+          "recordTags": [],
+          "id": 1464,
+          "createUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
+          "createDate": 1637573562,
+          "modifyUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
+          "modifyDate": 1637574359,
+          "owners": [],
+          "isPrivate": false
+        },
+        {
+          "@type": "Workflow",
+          "triggerLimit": null,
+          "name": "Get Collections",
+          "aliasName": null,
+          "tag": "#TAXII2 Threat Intel Feed",
+          "description": "Returns a list of public/private/shared collection resources which users have the access.",
+          "isActive": false,
+          "singleRecordExecution": false,
+          "remoteExecutableFlag": false,
+          "parameters": [],
+          "synchronous": false,
+          "lastModifyDate": 1637573859,
+          "collection": "/api/3/workflow_collections/013d6377-1548-4fa7-9ca1-83a8666623e6",
+          "versions": [],
+          "triggerStep": "/api/3/workflow_steps/ff9cf1f1-8eee-4345-b098-7bb23aac6b23",
+          "steps": [
+            {
+              "@type": "WorkflowStep",
+              "name": "Alerts",
+              "description": null,
+              "arguments": {
+                "route": "66777d91-e779-468e-a744-a817755fb4d9",
+                "title": "TAXII2 Threat Intel Feed: Get Collections",
+                "resources": [
+                  "alerts"
+                ],
+                "inputVariables": [],
+                "step_variables": {
+                  "input": {
+                    "records": "{{vars.input.records[0]}}"
+                  }
+                },
+                "noRecordExecution": true,
+                "singleRecordExecution": false
+              },
+              "status": null,
+              "top": "20",
+              "left": "20",
+              "stepType": "/api/3/workflow_step_types/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+              "uuid": "ff9cf1f1-8eee-4345-b098-7bb23aac6b23",
+              "id": 5783
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Get Collections",
+              "description": null,
+              "arguments": {
+                "name": "TAXII2 Threat Intel Feed",
+                "config": "2d5a33d4-e084-45b7-ac4c-d1556181a652",
+                "params": {
+                  "limit": "2",
+                  "offset": "1",
+                  "collection_type": "Offset and Limit"
+                },
+                "version": "1.0.0",
+                "connector": "taxii2-feed",
+                "operation": "get_collections",
+                "operationTitle": "Get Collections",
+                "step_variables": {
+                  "output_data": "{{vars.result}}"
+                }
+              },
+              "status": null,
+              "top": "120",
+              "left": "180",
+              "stepType": "/api/3/workflow_step_types/0bfed618-0316-11e7-93ae-92361f002671",
+              "uuid": "c4fa629b-0742-4533-9b9c-c4b92e433107",
+              "id": 5784
+            }
+          ],
+          "routes": [
+            {
+              "@type": "WorkflowRoute",
+              "name": "Alerts -> Get Collections",
+              "targetStep": "/api/3/workflow_steps/c4fa629b-0742-4533-9b9c-c4b92e433107",
+              "sourceStep": "/api/3/workflow_steps/ff9cf1f1-8eee-4345-b098-7bb23aac6b23",
+              "label": null,
+              "isExecuted": false,
+              "uuid": "46e52a5f-3eb0-419a-bd27-27a3bef99664"
+            }
+          ],
+          "priority": null,
+          "uuid": "b8f76bb3-378c-454f-9216-752130be80d7",
+          "recordTags": [],
+          "id": 1463,
+          "createUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
+          "createDate": 1637573562,
+          "modifyUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
+          "modifyDate": 1637573859,
+          "owners": [],
+          "isPrivate": false
+        }
+      ]
+    }
+  ],
+  "exported_tags": []
+}
