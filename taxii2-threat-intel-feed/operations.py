@@ -1,16 +1,13 @@
 import base64
 import tempfile
-import time
+from datetime import datetime
 
 import requests
-from connectors.cyops_utilities.builtins import create_file_from_string, extract_artifacts
-from taxii2client.v20 import Collection, as_pages
-from taxii2client.v21 import Collection, as_pages
+from connectors.cyops_utilities.builtins import create_file_from_string
 
 from connectors.core.connector import get_logger, ConnectorError
-from .constants import *
 
-logger = get_logger('taxii2_feed')
+logger = get_logger('taxii2-threat-intel-feed')
 
 
 class TaxiiFeed(object):
@@ -35,7 +32,8 @@ class TaxiiFeed(object):
             client_certificate_list = self.client_certificate.split('-----')
             # replace spaces with newline characters
             client_certificate_fixed = '-----'.join(
-                client_certificate_list[:2] + [client_certificate_list[2].replace(' ', '\n')] + client_certificate_list[3:])
+                client_certificate_list[:2] + [client_certificate_list[2].replace(' ', '\n')] + client_certificate_list[
+                                                                                                3:])
             crt_file = tempfile.NamedTemporaryFile(delete=False)
             crt_file.write(client_certificate_fixed.encode())
             crt_file.flush()
@@ -137,56 +135,6 @@ def get_output_schema(config, params, *args, **kwargs):
         })
 
 
-def get_epoch(_date):
-    try:
-        pattern = '%Y-%m-%dT%H:%M:%S.%fZ' if '.' in _date else '%Y-%m-%dT%H:%M:%SZ'
-        return int(time.mktime(time.strptime(_date, pattern)))
-    except Exception as err:
-        logger.exception(str(err))
-        raise ConnectorError(str(err))
-
-
-def max_age(params, ioc):
-    if params.get("expiry") is not None and params.get("expiry") != '':
-        return get_epoch(ioc["valid_from"]) + (params.get("expiry") * 86400)
-    elif "valid_until" in ioc.keys():
-        return get_epoch(ioc["valid_until"])
-    else:
-        return None
-
-
-def tlp(TLP_AMBER, TLP_RED, TLP_WHITE, TLP_GREEN, params):
-    if params.get('tlp') == 'RED':
-        return TLP_RED
-    if params.get('tlp') == 'AMBER':
-        return TLP_AMBER
-    if params.get('tlp') == 'GREEN':
-        return TLP_GREEN
-    if params.get('tlp') == 'WHITE':
-        return TLP_WHITE
-
-
-def stix_spec(ioc, _version, params):
-    return {
-        "type": "indicator",
-        "spec_version": _version,
-        "created": get_epoch(ioc["created"]),
-        "modified": get_epoch(ioc["modified"]),
-        "recordTags": ioc["indicator_types"] if "indicator_types" in ioc else ioc['labels'],
-        "name": ioc["name"],
-        "description": ioc["description"] if "description" in ioc else None,
-        "indicators": extract_artifacts(data=ioc["pattern"]),
-        "valid_from": get_epoch(ioc["valid_from"]),
-        "confidence": params.get("confidence") if params.get("confidence") is not None and params.get(
-            "confidence") != '' else 0,
-        "reputation": REPUTATION_MAP.get(params.get("reputation")) if params.get(
-            'Suspicious') is not None and params.get("Suspicious") != '' else REPUTATION_MAP.get("Suspicious"),
-        "tlp": TLP_MAP.get(params.get("tlp")) if params.get("tlp") is not None and params.get(
-            "tlp") != '' else TLP_MAP.get("White"),
-        "valid_until": max_age(params, ioc)
-    }
-
-
 def get_collections(config, params):
     taxii = TaxiiFeed(config)
     api_root = taxii.get_api_root_information(endpoint='taxii/')
@@ -208,10 +156,15 @@ def get_collections(config, params):
 
 def get_objects_by_collection_id(config, params):
     taxii = TaxiiFeed(config)
-    response = []
     api_root = taxii.get_api_root_information(endpoint='taxii/')
     response_headers = taxii.make_request(endpoint=api_root, api_info='api_root_info')
     headers = {'Accept': response_headers['Content-Type']}
+    created_after = params.get('added_after')
+    if created_after and type(created_after) == int:
+        # convert to epoch
+        created_after = datetime.fromtimestamp(created_after).strftime('%Y-%m-%dT%H:%M:%SZ')
+    if not created_after or created_after == '':
+        created_after = '1970-01-01T00:00:00.000Z'
     if params.get('limit') is None or params.get('limit') == '':
         server_url = config.get('server_url')
         if not server_url.startswith('https://'):
@@ -220,39 +173,44 @@ def get_objects_by_collection_id(config, params):
             server_url += '/'
         username = config.get('username')
         password = config.get('password')
+        if ' version=2.0' in headers['Accept']:
+            from taxii2client.v20 import Collection, as_pages
+        else:
+            from taxii2client.v21 import Collection, as_pages
         collection = Collection(
             api_root + 'collections/' + str(params.get('collectionID')) + '/',
             user=username, password=password)
-        for bundle in as_pages(collection.get_objects, added_after=params.get('added_after') if (
-                params.get('added_after') is not None and params.get(
-            'added_after') != '') else '1970-01-01T00:00:00.000Z', start=params.get('offset'),
+        response = []
+        for bundle in as_pages(collection.get_objects, added_after=created_after, start=params.get('offset'),
                                per_request=1000):
-            if 'objects' not in bundle.keys():
-                response.append(bundle)
+            if bundle.get("objects"):
+                response.extend(bundle["objects"])
+            else:
                 break
-            for ioc in bundle["objects"]:
-                if ioc["type"] == "indicator" and "spec_version" in ioc.keys():
-                    response.append(stix_spec(ioc, "2.1", params))
-                elif ioc["type"] == "indicator" and "spec_version" not in ioc.keys():
-                    response.append(stix_spec(ioc, "2.0", params))
     else:
         params = get_params(params)
         wanted_keys = set(['added_after'])
         query_params = {k: params[k] for k in params.keys() & wanted_keys}
         query_params.update({'match[type]': 'indicator'})
         headers.update({'Range': 'items {0}-{1}'.format(str(params.get('offset')), str(params.get('limit')))})
-        res = taxii.make_request(
+        response = taxii.make_request(
             endpoint=api_root + 'collections/' + str(params.get('collectionID')) + '/objects/',
             params=query_params, headers=headers)
-        for ioc in res["objects"]:
-            if ioc["type"] == "indicator" and "spec_version" in ioc.keys():
-                response.append(stix_spec(ioc, "2.1", params))
-            elif ioc["type"] == "indicator" and "spec_version" not in ioc.keys():
-                response.append(stix_spec(ioc, "2.0", params))
-    if params.get('file_response'):
-        return create_file_from_string(contents=response, filename=params.get('filename'))
+        response = response.get("objects", [])
+    try:
+        # dedup
+        filtered_indicators = [indicator for indicator in response if indicator["type"] == "indicator"]
+        seen = set()
+        deduped_indicators = [x for x in filtered_indicators if
+                              [(x["type"], x["pattern"]) not in seen, seen.add((x["type"], x["pattern"]))][0]]
+    except Exception as e:
+        logger.exception("Import Failed")
+        raise ConnectorError('Ingestion Failed with error: ' + str(e))
+    mode = params.get('output_mode')
+    if mode == 'Save to File':
+        return create_file_from_string(contents=deduped_indicators, filename=params.get('filename'))
     else:
-        return response
+        return deduped_indicators
 
 
 def _check_health(config):

@@ -1,5 +1,5 @@
 {
-  "name": "taxii2-feed",
+  "name": "taxii2-threat-intel-feed",
   "label": "TAXII2 Threat Intel Feed",
   "description": "TAXII2 Threat Intelligence Feed Integration",
   "publisher": "Fortinet",
@@ -9,6 +9,10 @@
   "category": "Threat Intelligence",
   "icon_small_name": "small.png",
   "icon_large_name": "large.png",
+  "ingestion_supported": true,
+  "ingestion_modes": [
+    "scheduled"
+  ],
   "help_online": "",
   "configuration": {
     "fields": [
@@ -35,7 +39,7 @@
         "onchange": {
           "Basic Authentication": [
             {
-              "title": "User Name / API Key",
+              "title": "User Name/API Key",
               "required": true,
               "editable": true,
               "visible": true,
@@ -73,9 +77,7 @@
               "description": "Add a key certificate file as text to connect to the TAXII Client."
             }
           ]
-        },
-        "tooltip": "Time stamp of when the indicator was last seen in STAXX. Date can be specified in Date format or Relative Time Unit format.",
-        "description": "Time stamp of when the indicator was last seen in STAXX. Date can be specified in Date format or Relative Time Unit format."
+        }
       },
       {
         "title": "Verify SSL",
@@ -92,7 +94,7 @@
     {
       "operation": "get_collections",
       "title": "Get Collections",
-      "description": "Returns a list of public/private/shared collection resources which users have the access.",
+      "description": "Returns the list of public/private/shared collection resources to which the user has access.",
       "category": "investigation",
       "annotation": "get_collections",
       "output_schema": {
@@ -128,8 +130,8 @@
                 "required": false,
                 "editable": true,
                 "type": "text",
-                "tooltip": "Returns general information about the collection, such as id, title, description, can_read, can_write and media_types.",
-                "description": "Returns general information about the collection, such as id, title, description, can_read, can_write and media_types."
+                "tooltip": "Returns general information about the collection, such as id, Title, Description, Can Read, Can Write and Media Types.",
+                "description": "Returns general information about the collection, such as id, Title, Description, Can Read, Can Write and Media Types."
               }
             ],
             "Offset and Limit": [
@@ -153,8 +155,8 @@
                 "editable": true,
                 "required": false,
                 "placeholder": "1000",
-                "tooltip": "Upper limit of collections to fetch.",
-                "description": "Upper limit of collections to fetch."
+                "tooltip": "Maximum number of indicators to fetch. If not specified, all objects in the specified collection are fetched.",
+                "description": "Maximum number of indicators to fetch. If not specified, all objects in the specified collection are fetched."
               }
             ]
           },
@@ -193,91 +195,34 @@
           "description": "Filter the result set to only include the items added after the specified time."
         },
         {
-          "title": "Save Response in File",
-          "name": "file_response",
+          "title": "Process Response As",
+          "name": "output_mode",
           "visible": true,
           "required": false,
           "editable": true,
-          "type": "checkbox",
+          "type": "select",
+          "options": [
+            "Save to File",
+            "Return as a JSON"
+          ],
+          "value": "Save to File",
+          "tooltip": "The Feed Data can either be returned as a JSON or written to a file on the FortiSOAR server",
+          "description": "The Feed Data can either be returned as a JSON or written to a file on the FortiSOAR server",
           "onchange": {
-            "true": [
+            "Return as a JSON": [],
+            "Save to File": [
               {
                 "title": "Filename",
                 "name": "filename",
                 "type": "text",
                 "visible": true,
                 "editable": true,
-                "required": false,
-                "placeholder": "Eg. demo.json",
+                "required": true,
+                "placeholder": "Eg. feeds.json",
                 "tooltip": "The file will be created under /tmp"
               }
             ]
-          },
-          "tooltip": "If check then save the response in File else in JSON",
-          "description": "Specify the response field, If check then save the response in File else in JSON"
-        },
-        {
-          "title": "Confidence",
-          "name": "confidence",
-          "type": "integer",
-          "tooltip": "Default Confidence score to be set for the feeds",
-          "required": false,
-          "editable": true,
-          "visible": true,
-          "value": 50,
-          "validation": {
-            "minlength": 0,
-            "maxlength": 100
-          },
-          "minimum": 0,
-          "maximum": 100
-        },
-        {
-          "title": "Reputation",
-          "name": "reputation",
-          "type": "select",
-          "tooltip": "Default Reputation to be set for the feeds",
-          "required": false,
-          "editable": true,
-          "visible": true,
-          "options": [
-            "Good",
-            "Suspicious",
-            "Malicious",
-            "No Reputation Available",
-            "TBD"
-          ],
-          "value": [
-            "Suspicious"
-          ]
-        },
-        {
-          "title": "TLP",
-          "name": "tlp",
-          "type": "select",
-          "tooltip": "Default TLP to be set for the feeds",
-          "required": false,
-          "editable": true,
-          "visible": true,
-          "options": [
-            "Red",
-            "Amber",
-            "Green",
-            "White"
-          ],
-          "value": [
-            "White"
-          ]
-        },
-        {
-          "title": "Maximum Age (in Days)",
-          "name": "expiry",
-          "type": "integer",
-          "required": false,
-          "editable": true,
-          "visible": true,
-          "tooltip": "Default age for the feeds. The indicator expires on 'valid_until' date unless a different expiry is specified. If an expiry is specified, the indicator will be marked expired on valid_from + expiry.",
-          "description": "Default age for the feeds. The indicator expires on 'valid_until' date unless a different expiry is specified. If an expiry is specified, the indicator will be marked expired on valid_from + expiry."
+          }
         },
         {
           "title": "Offset",
@@ -299,8 +244,8 @@
           "editable": true,
           "required": false,
           "placeholder": "1000",
-          "tooltip": "Upper limit of indicators to fetch, if not provided then fetch the full objects in specified collection.",
-          "description": "Upper limit of indicators to fetch, if not provided then fetch the full objects in specified collection."
+          "tooltip": "Maximum number of indicators to fetch. If not specified, all objects in the specified collection are fetched.",
+          "description": "Maximum number of indicators to fetch. If not specified, all objects in the specified collection are fetched."
         }
       ],
       "enabled": true

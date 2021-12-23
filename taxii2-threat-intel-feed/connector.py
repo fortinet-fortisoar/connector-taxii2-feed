@@ -2,7 +2,7 @@ from connectors.core.connector import Connector, get_logger, ConnectorError
 
 from .operations import operations, _check_health
 
-logger = get_logger('taxii2_feed')
+logger = get_logger('taxii2-threat-intel-feed')
 
 
 class TaxiiFeedCon(Connector):
