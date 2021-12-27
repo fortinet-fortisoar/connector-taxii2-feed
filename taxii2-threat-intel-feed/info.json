@@ -1,0 +1,264 @@
+{
+  "name": "taxii2-threat-intel-feed",
+  "label": "TAXII2 Threat Intel Feed",
+  "description": "TAXII2 Threat Intelligence Feed Integration",
+  "publisher": "Fortinet",
+  "cs_approved": true,
+  "cs_compatible": true,
+  "version": "1.0.0",
+  "category": "Threat Intelligence",
+  "icon_small_name": "small.png",
+  "icon_large_name": "large.png",
+  "ingestion_supported": true,
+  "ingestion_modes": [
+    "scheduled"
+  ],
+  "help_online": "",
+  "configuration": {
+    "fields": [
+      {
+        "title": "Server URL",
+        "required": true,
+        "editable": true,
+        "visible": true,
+        "type": "text",
+        "name": "server_url",
+        "value": "https://limo.anomali.com/api/v1/taxii2"
+      },
+      {
+        "title": "Authentication Type",
+        "name": "auth_type",
+        "visible": true,
+        "required": true,
+        "editable": true,
+        "type": "select",
+        "options": [
+          "Basic Authentication",
+          "SSL Two-Way Certificate"
+        ],
+        "onchange": {
+          "Basic Authentication": [
+            {
+              "title": "User Name/API Key",
+              "required": true,
+              "editable": true,
+              "visible": true,
+              "type": "text",
+              "name": "username"
+            },
+            {
+              "title": "Password",
+              "required": true,
+              "editable": true,
+              "visible": true,
+              "type": "password",
+              "name": "password"
+            }
+          ],
+          "SSL Two-Way Certificate": [
+            {
+              "title": "Client Certificate",
+              "name": "client_certificate",
+              "type": "textarea",
+              "visible": true,
+              "editable": true,
+              "required": true,
+              "tooltip": "Add a client certificate file as text to connect to the TAXII Client.",
+              "description": "Add a client certificate file as text to connect to the TAXII Client."
+            },
+            {
+              "title": "Certificate Key",
+              "name": "key_certificate",
+              "type": "textarea",
+              "visible": true,
+              "editable": true,
+              "required": true,
+              "tooltip": "Add a key certificate file as text to connect to the TAXII Client.",
+              "description": "Add a key certificate file as text to connect to the TAXII Client."
+            }
+          ]
+        }
+      },
+      {
+        "title": "Verify SSL",
+        "required": false,
+        "editable": true,
+        "visible": true,
+        "type": "checkbox",
+        "name": "verify_ssl",
+        "value": true
+      }
+    ]
+  },
+  "operations": [
+    {
+      "operation": "get_collections",
+      "title": "Get Collections",
+      "description": "Returns the list of public/private/shared collection resources to which the user has access.",
+      "category": "investigation",
+      "annotation": "get_collections",
+      "output_schema": {
+        "collections": [
+          {
+            "id": "",
+            "title": "",
+            "can_read": "",
+            "can_write": "",
+            "media_types": [
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "title": "Fetch Collection By",
+          "name": "collection_type",
+          "visible": true,
+          "required": true,
+          "editable": true,
+          "type": "select",
+          "options": [
+            "Collection ID",
+            "Offset and Limit"
+          ],
+          "onchange": {
+            "Collection ID": [
+              {
+                "title": "Collection ID",
+                "name": "collectionID",
+                "visible": true,
+                "required": false,
+                "editable": true,
+                "type": "text",
+                "tooltip": "Returns general information about the collection, such as id, Title, Description, Can Read, Can Write and Media Types.",
+                "description": "Returns general information about the collection, such as id, Title, Description, Can Read, Can Write and Media Types."
+              }
+            ],
+            "Offset and Limit": [
+              {
+                "title": "Offset",
+                "name": "offset",
+                "type": "text",
+                "visible": true,
+                "editable": true,
+                "required": true,
+                "placeholder": "0",
+                "value": "0",
+                "tooltip": "From which offset you want to fetch collections",
+                "description": "From which offset you want to fetch collections"
+              },
+              {
+                "title": "Limit",
+                "name": "limit",
+                "type": "text",
+                "visible": true,
+                "editable": true,
+                "required": false,
+                "placeholder": "1000",
+                "tooltip": "Maximum number of indicators to fetch. If not specified, all objects in the specified collection are fetched.",
+                "description": "Maximum number of indicators to fetch. If not specified, all objects in the specified collection are fetched."
+              }
+            ]
+          },
+          "description": "Select the the fetch type."
+        }
+      ],
+      "enabled": true
+    },
+    {
+      "operation": "get_objects_by_collection_id",
+      "title": "Fetch Indicators",
+      "description": "Retrieve all available objects in a Collection.",
+      "category": "investigation",
+      "annotation": "get_objects_by_collection_id",
+      "api_output_schema": "get_output_schema",
+      "output_schema": {},
+      "parameters": [
+        {
+          "title": "Collection ID",
+          "name": "collectionID",
+          "visible": true,
+          "required": true,
+          "editable": true,
+          "type": "text",
+          "tooltip": "Returns general information about the collection, such as id, title, description, can_read, can_write and media_types.",
+          "description": "Returns general information about the collection, such as id, title, description, can_read, can_write and media_types."
+        },
+        {
+          "title": "Created After",
+          "name": "added_after",
+          "visible": true,
+          "required": false,
+          "editable": true,
+          "type": "datetime",
+          "tooltip": "Filter the result set to only include the items added after the specified time.",
+          "description": "Filter the result set to only include the items added after the specified time."
+        },
+        {
+          "title": "Process Response As",
+          "name": "output_mode",
+          "visible": true,
+          "required": false,
+          "editable": true,
+          "type": "select",
+          "options": [
+            "Save to File",
+            "Return as a JSON"
+          ],
+          "value": "Save to File",
+          "tooltip": "The Feed Data can either be returned as a JSON or written to a file on the FortiSOAR server",
+          "description": "The Feed Data can either be returned as a JSON or written to a file on the FortiSOAR server",
+          "onchange": {
+            "Return as a JSON": [],
+            "Save to File": [
+              {
+                "title": "Filename",
+                "name": "filename",
+                "type": "text",
+                "visible": true,
+                "editable": true,
+                "required": true,
+                "placeholder": "Eg. feeds.json",
+                "tooltip": "The file will be created under /tmp"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Offset",
+          "name": "offset",
+          "type": "text",
+          "visible": true,
+          "editable": true,
+          "required": true,
+          "placeholder": "0",
+          "value": "0",
+          "tooltip": "From which offset you want to fetch indicators",
+          "description": "From which offset you want to fetch indicators"
+        },
+        {
+          "title": "Limit",
+          "name": "limit",
+          "type": "text",
+          "visible": true,
+          "editable": true,
+          "required": false,
+          "placeholder": "1000",
+          "tooltip": "Maximum number of indicators to fetch. If not specified, all objects in the specified collection are fetched.",
+          "description": "Maximum number of indicators to fetch. If not specified, all objects in the specified collection are fetched."
+        }
+      ],
+      "enabled": true
+    },
+    {
+      "operation": "get_output_schema",
+      "annotation": "get_output_schema",
+      "description": "Gives the output schema based on the inputs",
+      "title": "Get Output Schema",
+      "enabled": true,
+      "visible": false,
+      "parameters": [],
+      "output_schema": {}
+    }
+  ]
+}
