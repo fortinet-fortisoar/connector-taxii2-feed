@@ -5,7 +5,7 @@ from .operations import operations, _check_health
 logger = get_logger('taxii2-threat-intel-feed')
 
 
-class TaxiiFeedCon(Connector):
+class TAXIIFeedCon(Connector):
     def execute(self, config, operation, params, **kwargs):
         logger.info('In execute() Operation: {}'.format(operation))
         try:

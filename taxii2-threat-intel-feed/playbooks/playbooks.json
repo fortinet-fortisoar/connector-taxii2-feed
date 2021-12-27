@@ -6,13 +6,13 @@
       "name": "Sample - TAXII2 Threat Intel Feed - 1.0.0",
       "description": "Sample playbooks for \"TAXII2 Threat Intel Feed\" connector. If you are planning to use any of the sample playbooks in your environment, ensure that you clone those playbooks and move them to a different collection, since the sample playbook collection gets deleted during connector upgrade and delete.",
       "visible": true,
-      "image": "/api/3/images/0b0391d4-ebba-4476-bfc1-b7d16a8c336c",
+      "image": "/api/3/images/4978e842-9abf-444e-8eb7-212be359a7c5",
       "uuid": "0820fcd2-3424-4b4b-aae8-f7ac9b9463a9",
-      "id": 64,
-      "createUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
-      "createDate": 1640244873,
-      "modifyUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
-      "modifyDate": 1640244873,
+      "id": 65,
+      "createUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
+      "createDate": 1640245139,
+      "modifyUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
+      "modifyDate": 1640245139,
       "recordTags": [],
       "workflows": [
         {
@@ -57,7 +57,7 @@
               "left": "125",
               "stepType": "/api/3/workflow_step_types/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
               "uuid": "fa821678-c749-4932-835f-0aeb4364ddfb",
-              "id": 3612
+              "id": 3631
             },
             {
               "@type": "WorkflowStep",
@@ -85,7 +85,7 @@
               "left": "120",
               "stepType": "/api/3/workflow_step_types/0bfed618-0316-11e7-93ae-92361f002671",
               "uuid": "4ffe2dc9-5ec3-4a02-9a20-d0e69bddf82a",
-              "id": 3613
+              "id": 3632
             },
             {
               "@type": "WorkflowStep",
@@ -123,7 +123,7 @@
               "left": "120",
               "stepType": "/api/3/workflow_step_types/0bfed618-0316-11e7-93ae-92361f002671",
               "uuid": "368286d7-3dec-42e2-85c9-f196ae17eda3",
-              "id": 3614
+              "id": 3633
             }
           ],
           "routes": [
@@ -149,21 +149,21 @@
           "priority": null,
           "uuid": "20064d48-c19e-400f-9ec8-209699f6b345",
           "recordTags": [],
-          "id": 627,
-          "createUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
-          "createDate": 1640244873,
-          "modifyUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
-          "modifyDate": 1640244873,
+          "id": 631,
+          "createUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
+          "createDate": 1640245139,
+          "modifyUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
+          "modifyDate": 1640245139,
           "owners": [],
           "isPrivate": false
         },
         {
           "@type": "Workflow",
           "triggerLimit": null,
-          "name": "> Taxii2 > Fetch and Create",
+          "name": "> TAXII2 > Fetch and Create",
           "aliasName": null,
           "tag": null,
-          "description": "Fetch and Create Incidents from Taxii2",
+          "description": "Fetch and Create Indicators from TAXII2 Indicators Objects",
           "isActive": false,
           "debug": false,
           "singleRecordExecution": false,
@@ -173,7 +173,7 @@
             "lastPullTime"
           ],
           "synchronous": false,
-          "lastModifyDate": 1640244921,
+          "lastModifyDate": 1640614363,
           "collection": "/api/3/workflow_collections/0820fcd2-3424-4b4b-aae8-f7ac9b9463a9",
           "versions": [],
           "triggerStep": "/api/3/workflow_steps/95dcb8c0-52fb-4af8-9843-39b4cb407d29",
@@ -226,7 +226,7 @@
               "left": "1260",
               "stepType": "/api/3/workflow_step_types/2597053c-e718-44b4-8394-4d40fe26d357",
               "uuid": "cc64ef7b-82c5-4a7b-b3be-333a9bc8370c",
-              "id": 3622
+              "id": 3634
             },
             {
               "@type": "WorkflowStep",
@@ -240,7 +240,7 @@
               "left": "940",
               "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
               "uuid": "f7e3e3cd-0fc7-4946-ac58-74bdfe64fd84",
-              "id": 3623
+              "id": 3635
             },
             {
               "@type": "WorkflowStep",
@@ -261,7 +261,7 @@
               "left": "240",
               "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
               "uuid": "71ee3b01-f9e6-42f8-be98-29c60b62183b",
-              "id": 3624
+              "id": 3636
             },
             {
               "@type": "WorkflowStep",
@@ -276,7 +276,7 @@
               "left": "420",
               "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
               "uuid": "cf1fd11a-b0df-40f9-90e5-920bcb3f0017",
-              "id": 3625
+              "id": 3637
             },
             {
               "@type": "WorkflowStep",
@@ -303,7 +303,7 @@
               "left": "600",
               "stepType": "/api/3/workflow_step_types/12254cf5-5db7-4b1a-8cb1-3af081924b28",
               "uuid": "f42e1666-1d41-48fe-8703-b61be784f191",
-              "id": 3626
+              "id": 3638
             },
             {
               "@type": "WorkflowStep",
@@ -322,7 +322,7 @@
               "left": "40",
               "stepType": "/api/3/workflow_step_types/b348f017-9a94-471f-87f8-ce88b6a7ad62",
               "uuid": "95dcb8c0-52fb-4af8-9843-39b4cb407d29",
-              "id": 3627
+              "id": 3639
             },
             {
               "@type": "WorkflowStep",
@@ -350,7 +350,7 @@
               "left": "900",
               "stepType": "/api/3/workflow_step_types/0bfed618-0316-11e7-93ae-92361f002671",
               "uuid": "921dce54-370b-48e1-9d37-f13ba6ef5c09",
-              "id": 3628
+              "id": 3640
             }
           ],
           "routes": [
@@ -417,11 +417,11 @@
             "fetch",
             "taxii2-threat-intel-feed"
           ],
-          "id": 629,
-          "createUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
-          "createDate": 1640244873,
+          "id": 632,
+          "createUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
+          "createDate": 1640245139,
           "modifyUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
-          "modifyDate": 1640244921,
+          "modifyDate": 1640614362,
           "owners": [],
           "isPrivate": false
         },
@@ -467,7 +467,7 @@
               "left": "20",
               "stepType": "/api/3/workflow_step_types/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
               "uuid": "ccd5b627-ada1-4934-ac08-1a253dcaf60e",
-              "id": 3629
+              "id": 3641
             },
             {
               "@type": "WorkflowStep",
@@ -494,7 +494,7 @@
               "left": "180",
               "stepType": "/api/3/workflow_step_types/0bfed618-0316-11e7-93ae-92361f002671",
               "uuid": "12f8c9ba-7021-41a0-a3f2-652bf862daf7",
-              "id": 3630
+              "id": 3642
             }
           ],
           "routes": [
@@ -511,18 +511,18 @@
           "priority": null,
           "uuid": "b8f76bb3-378c-454f-9216-752130be80d7",
           "recordTags": [],
-          "id": 630,
-          "createUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
-          "createDate": 1640244873,
-          "modifyUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
-          "modifyDate": 1640244873,
+          "id": 633,
+          "createUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
+          "createDate": 1640245139,
+          "modifyUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
+          "modifyDate": 1640245139,
           "owners": [],
           "isPrivate": false
         },
         {
           "@type": "Workflow",
           "triggerLimit": null,
-          "name": "Taxii2 > Ingest",
+          "name": "TAXII2 > Ingest",
           "aliasName": null,
           "tag": null,
           "description": "Fetch Collections from Taxii2",
@@ -532,7 +532,7 @@
           "remoteExecutableFlag": false,
           "parameters": [],
           "synchronous": false,
-          "lastModifyDate": 1640244951,
+          "lastModifyDate": 1640614219,
           "collection": "/api/3/workflow_collections/0820fcd2-3424-4b4b-aae8-f7ac9b9463a9",
           "versions": [],
           "triggerStep": "/api/3/workflow_steps/e99de9e8-9f34-4f0d-bed4-8bda324d284e",
@@ -553,7 +553,7 @@
               "left": "125",
               "stepType": "/api/3/workflow_step_types/b348f017-9a94-471f-87f8-ce88b6a7ad62",
               "uuid": "e99de9e8-9f34-4f0d-bed4-8bda324d284e",
-              "id": 3615
+              "id": 3643
             },
             {
               "@type": "WorkflowStep",
@@ -575,7 +575,7 @@
               "left": "125",
               "stepType": "/api/3/workflow_step_types/0109f35d-090b-4a2b-bd8a-94cbc3508562",
               "uuid": "8c1062d2-c93f-4578-943a-a580be1b0f27",
-              "id": 3616
+              "id": 3644
             },
             {
               "@type": "WorkflowStep",
@@ -589,7 +589,7 @@
               "left": "125",
               "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
               "uuid": "a6be76f4-c893-4f37-a444-29b137f1731d",
-              "id": 3617
+              "id": 3645
             },
             {
               "@type": "WorkflowStep",
@@ -604,7 +604,7 @@
               "left": "125",
               "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
               "uuid": "c88e93c8-b523-460f-a3be-aed5069f8a59",
-              "id": 3618
+              "id": 3646
             },
             {
               "@type": "WorkflowStep",
@@ -629,7 +629,7 @@
               "left": "125",
               "stepType": "/api/3/workflow_step_types/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
               "uuid": "3962f190-8fb6-478e-adaa-bd680f5bf261",
-              "id": 3619
+              "id": 3647
             },
             {
               "@type": "WorkflowStep",
@@ -652,7 +652,7 @@
               "left": "125",
               "stepType": "/api/3/workflow_step_types/0109f35d-090b-4a2b-bd8a-94cbc3508562",
               "uuid": "75aca733-8111-4392-aecf-5e3699cddc69",
-              "id": 3620
+              "id": 3648
             },
             {
               "@type": "WorkflowStep",
@@ -678,7 +678,7 @@
               "left": "125",
               "stepType": "/api/3/workflow_step_types/0bfed618-0316-11e7-93ae-92361f002671",
               "uuid": "020c1b5e-8000-4877-b76a-6735e3e21930",
-              "id": 3621
+              "id": 3649
             }
           ],
           "routes": [
@@ -744,11 +744,11 @@
             "ingest",
             "taxii2-threat-intel-feed"
           ],
-          "id": 628,
-          "createUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
-          "createDate": 1640244873,
+          "id": 634,
+          "createUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
+          "createDate": 1640245139,
           "modifyUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
-          "modifyDate": 1640244951,
+          "modifyDate": 1640614219,
           "owners": [],
           "isPrivate": false
         }

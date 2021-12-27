@@ -10,7 +10,7 @@ from connectors.core.connector import get_logger, ConnectorError
 logger = get_logger('taxii2-threat-intel-feed')
 
 
-class TaxiiFeed(object):
+class TAXIIFeed(object):
     def __init__(self, config):
         self.crt = None
         self.server_url = config.get('server_url')
@@ -136,7 +136,7 @@ def get_output_schema(config, params, *args, **kwargs):
 
 
 def get_collections(config, params):
-    taxii = TaxiiFeed(config)
+    taxii = TAXIIFeed(config)
     api_root = taxii.get_api_root_information(endpoint='taxii/')
     response_headers = taxii.make_request(endpoint=api_root, api_info='api_root_info')
     headers = {'Accept': response_headers['Content-Type']}
@@ -155,7 +155,7 @@ def get_collections(config, params):
 
 
 def get_objects_by_collection_id(config, params):
-    taxii = TaxiiFeed(config)
+    taxii = TAXIIFeed(config)
     api_root = taxii.get_api_root_information(endpoint='taxii/')
     response_headers = taxii.make_request(endpoint=api_root, api_info='api_root_info')
     headers = {'Accept': response_headers['Content-Type']}
@@ -202,7 +202,7 @@ def get_objects_by_collection_id(config, params):
         filtered_indicators = [indicator for indicator in response if indicator["type"] == "indicator"]
         seen = set()
         deduped_indicators = [x for x in filtered_indicators if
-                              [(x["type"], x["pattern"]) not in seen, seen.add((x["type"], x["pattern"]))][0]]
+                              [x["pattern"].replace(" ", "") not in seen, seen.add(x["pattern"].replace(" ", ""))][0]]
     except Exception as e:
         logger.exception("Import Failed")
         raise ConnectorError('Ingestion Failed with error: ' + str(e))
@@ -215,7 +215,7 @@ def get_objects_by_collection_id(config, params):
 
 def _check_health(config):
     try:
-        taxii = TaxiiFeed(config)
+        taxii = TAXIIFeed(config)
         res = taxii.get_api_root_information(endpoint='taxii/')
         if res:
             logger.info('connector available')
