@@ -1,7 +1,7 @@
 {
   "name": "taxii2-threat-intel-feed",
   "label": "TAXII2 Threat Intel Feed",
-  "description": "TAXII2 Threat Intelligence Feed Integration",
+  "description": "TAXII2 Threat Intelligence Feed is a preconfigured set of intelligence feeds that STAXX users can access immediately upon download, and which offers indicators and insights spanning threat categories you need to secure your business. This connector facilitates automated interactions, such as returning the list of public, private, and shared collection resources to which the user has access, returning general information for a specific object of a specific collection, etc. <br/><br/>This connector has a dependency on the <a href=\\\"/content-hub/all-content/?contentType=solutionpack&amp;tag=ThreatIntelManagement\\\" target=\\\"_blank\\\" rel=\\\"noopener\\\">Threat Intel Management Solution Pack</a>. Install the Solution Pack before enabling ingestion of Threat Feeds from this source.",
   "publisher": "Fortinet",
   "cs_approved": true,
   "cs_compatible": true,
@@ -23,61 +23,26 @@
         "visible": true,
         "type": "text",
         "name": "server_url",
-        "value": "https://limo.anomali.com/api/v1/taxii2"
+        "placeholder": "https://api.xforce.ibmcloud.com/api/",
+        "description": "Review the server URL of the TAXII2 Threat Intelligence Feed server to which you will connect and retrieve data"
       },
       {
-        "title": "Authentication Type",
-        "name": "auth_type",
-        "visible": true,
+        "title": "Username/API Key",
         "required": true,
         "editable": true,
-        "type": "select",
-        "options": [
-          "Basic Authentication",
-          "SSL Two-Way Certificate"
-        ],
-        "onchange": {
-          "Basic Authentication": [
-            {
-              "title": "User Name/API Key",
-              "required": true,
-              "editable": true,
-              "visible": true,
-              "type": "text",
-              "name": "username"
-            },
-            {
-              "title": "Password",
-              "required": true,
-              "editable": true,
-              "visible": true,
-              "type": "password",
-              "name": "password"
-            }
-          ],
-          "SSL Two-Way Certificate": [
-            {
-              "title": "Client Certificate",
-              "name": "client_certificate",
-              "type": "textarea",
-              "visible": true,
-              "editable": true,
-              "required": true,
-              "tooltip": "Add a client certificate file as text to connect to the TAXII Client.",
-              "description": "Add a client certificate file as text to connect to the TAXII Client."
-            },
-            {
-              "title": "Certificate Key",
-              "name": "key_certificate",
-              "type": "textarea",
-              "visible": true,
-              "editable": true,
-              "required": true,
-              "tooltip": "Add a key certificate file as text to connect to the TAXII Client.",
-              "description": "Add a key certificate file as text to connect to the TAXII Client."
-            }
-          ]
-        }
+        "visible": true,
+        "type": "text",
+        "name": "username",
+        "description": "The Username/API Key that is configured for your account to access the TAXII2 Threat Intelligence Feed APIs."
+      },
+      {
+        "title": "Password/API Password",
+        "required": true,
+        "editable": true,
+        "visible": true,
+        "type": "password",
+        "name": "password",
+        "description": "The Password/API Password that is configured for your account to access the TAXII2 Threat Intelligence Feed APIs."
       },
       {
         "title": "Verify SSL",
@@ -86,7 +51,8 @@
         "visible": true,
         "type": "checkbox",
         "name": "verify_ssl",
-        "value": true
+        "value": true,
+        "description": "Specifies whether the SSL certificate for the server is to be verified or not. By default, this option is set as True"
       }
     ]
   },
@@ -94,7 +60,7 @@
     {
       "operation": "get_collections",
       "title": "Get Collections",
-      "description": "Returns the list of public/private/shared collection resources to which the user has access.",
+      "description": "Retrieves a list of public/private/shared collection resources to which the users have access from TAXII2 Threat Intelligence Feed, based on the collection ID you have specified.",
       "category": "investigation",
       "annotation": "get_collections",
       "output_schema": {
@@ -111,56 +77,14 @@
       },
       "parameters": [
         {
-          "title": "Fetch Collection By",
-          "name": "collection_type",
+          "title": "Collection ID",
+          "name": "collectionID",
           "visible": true,
-          "required": true,
+          "required": false,
           "editable": true,
-          "type": "select",
-          "options": [
-            "Collection ID",
-            "Offset and Limit"
-          ],
-          "onchange": {
-            "Collection ID": [
-              {
-                "title": "Collection ID",
-                "name": "collectionID",
-                "visible": true,
-                "required": false,
-                "editable": true,
-                "type": "text",
-                "tooltip": "Returns general information about the collection, such as id, Title, Description, Can Read, Can Write and Media Types.",
-                "description": "Returns general information about the collection, such as id, Title, Description, Can Read, Can Write and Media Types."
-              }
-            ],
-            "Offset and Limit": [
-              {
-                "title": "Offset",
-                "name": "offset",
-                "type": "text",
-                "visible": true,
-                "editable": true,
-                "required": true,
-                "placeholder": "0",
-                "value": "0",
-                "tooltip": "From which offset you want to fetch collections",
-                "description": "From which offset you want to fetch collections"
-              },
-              {
-                "title": "Limit",
-                "name": "limit",
-                "type": "text",
-                "visible": true,
-                "editable": true,
-                "required": false,
-                "placeholder": "1000",
-                "tooltip": "Maximum number of indicators to fetch. If not specified, all objects in the specified collection are fetched.",
-                "description": "Maximum number of indicators to fetch. If not specified, all objects in the specified collection are fetched."
-              }
-            ]
-          },
-          "description": "Select the the fetch type."
+          "type": "text",
+          "tooltip": "The ID of the collection whose general information you want to retrieve from TAXII2 Threat Intelligence Feed",
+          "description": "The ID of the collection whose general information, such as ID, Title, Description, Can Read, Can Write, Media Types, etc. you want to retrieve from TAXII2 Threat Intelligence Feed"
         }
       ],
       "enabled": true
@@ -168,7 +92,7 @@
     {
       "operation": "get_objects_by_collection_id",
       "title": "Fetch Indicators",
-      "description": "Retrieve all available objects in a Collection.",
+      "description": "Retrieves all available objects of a specific collection from TAXII2 Threat Intel Feed based on the collection ID and other input parameters you have specified",
       "category": "investigation",
       "annotation": "get_objects_by_collection_id",
       "api_output_schema": "get_output_schema",
@@ -181,8 +105,8 @@
           "required": true,
           "editable": true,
           "type": "text",
-          "tooltip": "Returns general information about the collection, such as id, title, description, can_read, can_write and media_types.",
-          "description": "Returns general information about the collection, such as id, title, description, can_read, can_write and media_types."
+          "tooltip": "The ID of the collection whose general information such as ID, title, description, can_read, can_write, and media_types you want to retrieve from TAXII2 Threat Intel Feed",
+          "description": "The ID of the collection whose general information such as ID, title, description, can_read, can_write, and media_types you want to retrieve from TAXII2 Threat Intel Feed"
         },
         {
           "title": "Created After",
@@ -191,8 +115,8 @@
           "required": false,
           "editable": true,
           "type": "datetime",
-          "tooltip": "Filter the result set to only include the items added after the specified time.",
-          "description": "Filter the result set to only include the items added after the specified time."
+          "tooltip": "The Datetime using which you want to filter the result set to only include only those items that have been created after the specified time",
+          "description": "The Datetime using which you want to filter the result set to only include only those items that have been created after the specified time"
         },
         {
           "title": "Process Response As",
@@ -202,13 +126,25 @@
           "editable": true,
           "type": "select",
           "options": [
+            "Create as Feed Records in FortiSOAR",
             "Save to File",
             "Return as a JSON"
           ],
-          "value": "Save to File",
-          "tooltip": "The Feed Data can either be returned as a JSON or written to a file on the FortiSOAR server",
-          "description": "The Feed Data can either be returned as a JSON or written to a file on the FortiSOAR server",
+          "value": "Create as Feed Records in FortiSOAR",
+          "tooltip": "The Feed Data can either be returned as a JSON; written to a file on the FortiSOAR server; or Created as Feed Records in FortiSOAR",
+          "description": "Select the method of returning the Feed Data information. You can choose between the data being create as Feed records in FortiSOAR or returned in the JSON format (Return as a JSON) or being written to a file on the FortiSOAR server (Save to File). If you choose the 'Create as Feed Records in FortiSOAR' option, then in Record Creation Playbook IRI field, specify the IRI of the Create Record playbooks IRI, else if if you choose 'Save to File' option, then in the Filename field, specify the name of the file in which you want to save the feed information retrieved from IBM X-Force.",
           "onchange": {
+            "Create as Feed Records in FortiSOAR": [
+              {
+                "title": "Record Creation Playbook IRI",
+                "description": "",
+                "type": "text",
+                "name": "create_pb_id",
+                "required": false,
+                "editable": true,
+                "visible": true
+              }
+            ],
             "Return as a JSON": [],
             "Save to File": [
               {
@@ -223,29 +159,6 @@
               }
             ]
           }
-        },
-        {
-          "title": "Offset",
-          "name": "offset",
-          "type": "text",
-          "visible": true,
-          "editable": true,
-          "required": true,
-          "placeholder": "0",
-          "value": "0",
-          "tooltip": "From which offset you want to fetch indicators",
-          "description": "From which offset you want to fetch indicators"
-        },
-        {
-          "title": "Limit",
-          "name": "limit",
-          "type": "text",
-          "visible": true,
-          "editable": true,
-          "required": false,
-          "placeholder": "1000",
-          "tooltip": "Maximum number of indicators to fetch. If not specified, all objects in the specified collection are fetched.",
-          "description": "Maximum number of indicators to fetch. If not specified, all objects in the specified collection are fetched."
         }
       ],
       "enabled": true
