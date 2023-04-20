@@ -1,51 +1,34 @@
 import base64
-import tempfile
 from datetime import datetime
 
 import requests
 from connectors.cyops_utilities.builtins import create_file_from_string
-
 from connectors.core.connector import get_logger, ConnectorError
+
+try:
+    from integrations.crudhub import trigger_ingest_playbook
+except:
+    # ignore. lower FSR version
+    pass
 
 logger = get_logger('taxii2-threat-intel-feed')
 
 
 class TAXIIFeed(object):
     def __init__(self, config):
-        self.crt = None
         self.server_url = config.get('server_url')
         if not self.server_url.startswith('https://'):
             self.server_url = 'https://' + self.server_url
         if not self.server_url.endswith('/'):
             self.server_url += '/'
-        if 'Basic Authentication' in config.get('auth_type'):
-            self.username = config.get('username')
-            self.password = config.get('password')
-            usr_pass = self.username + ":" + self.password
-            usr_pass = usr_pass.encode()
-            b64val = base64.b64encode(usr_pass)
-            token = 'Basic {}'.format(b64val.decode("utf-8"))
-            self.headers = {'Authorization': token}
-        else:
-            self.client_certificate = config.get('client_certificate')
-            self.key_certificate = config.get('key_certificate')
-            client_certificate_list = self.client_certificate.split('-----')
-            # replace spaces with newline characters
-            client_certificate_fixed = '-----'.join(
-                client_certificate_list[:2] + [client_certificate_list[2].replace(' ', '\n')] + client_certificate_list[
-                                                                                                3:])
-            crt_file = tempfile.NamedTemporaryFile(delete=False)
-            crt_file.write(client_certificate_fixed.encode())
-            crt_file.flush()
 
-            key_certificate_list = self.key_certificate.split('-----')
-            # replace spaces with newline characters
-            key_certificate_fixed = '-----'.join(
-                key_certificate_list[:2] + [key_certificate_list[2].replace(' ', '\n')] + key_certificate_list[3:])
-            key_file = tempfile.NamedTemporaryFile(delete=False)
-            key_file.write(key_certificate_fixed.encode())
-            key_file.flush()
-            self.crt = (crt_file.name, key_file.name)
+        self.username = config.get('username')
+        self.password = config.get('password')
+        usr_pass = self.username + ":" + self.password
+        usr_pass = usr_pass.encode()
+        b64val = base64.b64encode(usr_pass)
+        token = 'Basic {}'.format(b64val.decode("utf-8"))
+        self.headers = {'Authorization': token}
         self.verify_ssl = config.get('verify_ssl')
         self.error_msg = {
             400: 'The parameters are invalid.',
@@ -68,7 +51,6 @@ class TAXIIFeed(object):
                                         endpoint,
                                         data=data,
                                         headers=headers,
-                                        cert=self.crt,
                                         verify=self.verify_ssl,
                                         params=params)
             if (response.status_code == 200 or response.status_code == 206) and api_info == 'api_root_info':
@@ -91,7 +73,11 @@ class TAXIIFeed(object):
 
     def get_api_root_information(self, endpoint):
         api_root = self.make_request(endpoint=self.server_url + endpoint, headers={'Content-Type': 'application/json'})
-        return api_root['api_roots'][0]
+        try:
+            resp = api_root['api_roots'][0]
+            return resp
+        except:
+            return self.server_url + 'taxii2'
 
 
 def get_params(params):
@@ -137,17 +123,15 @@ def get_output_schema(config, params, *args, **kwargs):
 
 def get_collections(config, params):
     taxii = TAXIIFeed(config)
-    api_root = taxii.get_api_root_information(endpoint='taxii/')
+    api_root = taxii.get_api_root_information(endpoint='taxii2/')
     response_headers = taxii.make_request(endpoint=api_root, api_info='api_root_info')
     headers = {'Accept': response_headers['Content-Type']}
-    if 'Collection ID' in params.get('collection_type'):
-        response = taxii.make_request(endpoint=api_root + 'collections/' + str(params['collectionID']) + '/',
+    params = {k: v for k, v in params.items() if v is not None and v != ''}
+    if params:
+        response = taxii.make_request(endpoint=api_root + '/collections/' + str(params['collectionID']) + '/',
                                       headers=headers)
     else:
-        if params.get('limit') is not None or params.get('limit') != '':
-            headers.update(
-                {'Range': 'items {0}-{1}'.format(str(params.get('offset')), str(params.get('limit')))})
-        response = taxii.make_request(endpoint=api_root + 'collections/', headers=headers)
+        response = taxii.make_request(endpoint=api_root + '/collections/', headers=headers)
     if response.get('collections'):
         return response
     else:
@@ -156,57 +140,29 @@ def get_collections(config, params):
 
 def get_objects_by_collection_id(config, params):
     taxii = TAXIIFeed(config)
-    api_root = taxii.get_api_root_information(endpoint='taxii/')
+    api_root = taxii.get_api_root_information(endpoint='taxii2/')
     response_headers = taxii.make_request(endpoint=api_root, api_info='api_root_info')
     headers = {'Accept': response_headers['Content-Type']}
-    created_after = params.get('added_after')
-    if created_after and type(created_after) == int:
-        # convert to epoch
-        created_after = datetime.fromtimestamp(created_after).strftime('%Y-%m-%dT%H:%M:%SZ')
-    if not created_after or created_after == '':
-        created_after = '1970-01-01T00:00:00.000Z'
-    if params.get('limit') is None or params.get('limit') == '':
-        server_url = config.get('server_url')
-        if not server_url.startswith('https://'):
-            server_url = 'https://' + server_url
-        if not server_url.endswith('/'):
-            server_url += '/'
-        username = config.get('username')
-        password = config.get('password')
-        if ' version=2.0' in headers['Accept']:
-            from taxii2client.v20 import Collection, as_pages
-        else:
-            from taxii2client.v21 import Collection, as_pages
-        collection = Collection(
-            api_root + 'collections/' + str(params.get('collectionID')) + '/',
-            user=username, password=password)
-        response = []
-        for bundle in as_pages(collection.get_objects, added_after=created_after, start=params.get('offset'),
-                               per_request=1000):
-            if bundle.get("objects"):
-                response.extend(bundle["objects"])
-            else:
-                break
-    else:
-        params = get_params(params)
-        wanted_keys = set(['added_after'])
-        query_params = {k: params[k] for k in params.keys() & wanted_keys}
-        query_params.update({'match[type]': 'indicator'})
-        headers.update({'Range': 'items {0}-{1}'.format(str(params.get('offset')), str(params.get('limit')))})
-        response = taxii.make_request(
-            endpoint=api_root + 'collections/' + str(params.get('collectionID')) + '/objects/',
-            params=query_params, headers=headers)
-        response = response.get("objects", [])
-    try:
-        # dedup
-        filtered_indicators = [indicator for indicator in response if indicator["type"] == "indicator"]
-        seen = set()
-        deduped_indicators = [x for x in filtered_indicators if
-                              [x["pattern"].replace(" ", "") not in seen, seen.add(x["pattern"].replace(" ", ""))][0]]
-    except Exception as e:
-        logger.exception("Import Failed")
-        raise ConnectorError('Ingestion Failed with error: ' + str(e))
+    params = get_params(params)
+    wanted_keys = set(['added_after'])
     mode = params.get('output_mode')
+    query_params = {k: params[k] for k in params.keys() & wanted_keys}
+    try:
+        response = taxii.make_request(endpoint=api_root + '/collections/' + str(params['collectionID']) + '/objects',
+                                      params=query_params, headers=headers)
+        response = response.get("objects", [])
+        filtered_indicators = [indicator for indicator in response if indicator["type"] == "indicator"]
+    except Exception as e:
+        if mode == 'Create as Feed Records in FortiSOAR':
+            return 'No records ingested'
+        raise ConnectorError(str(e))
+    if mode == 'Create as Feed Records in FortiSOAR':
+        create_pb_id = params.get("create_pb_id")
+        trigger_ingest_playbook(filtered_indicators, create_pb_id, parent_env=kwargs.get('env', {}), batch_size=1000,
+                                dedup_field="pattern")
+        return 'Successfully triggered playbooks to create feed records'
+    seen = set()
+    deduped_indicators = [x for x in filtered_indicators if [x["pattern"] not in seen, seen.add(x["pattern"])][0]]
     if mode == 'Save to File':
         return create_file_from_string(contents=deduped_indicators, filename=params.get('filename'))
     else:
@@ -216,7 +172,7 @@ def get_objects_by_collection_id(config, params):
 def _check_health(config):
     try:
         taxii = TAXIIFeed(config)
-        res = taxii.get_api_root_information(endpoint='taxii/')
+        res = taxii.get_api_root_information(endpoint='taxii2/')
         if res:
             logger.info('connector available')
             return True
