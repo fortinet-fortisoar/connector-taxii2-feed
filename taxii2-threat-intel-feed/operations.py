@@ -1,6 +1,11 @@
+"""
+Copyright start
+Copyright (C) 2008 - 2023 Fortinet Inc.
+All rights reserved.
+FORTINET CONFIDENTIAL & FORTINET PROPRIETARY SOURCE CODE
+Copyright end
+"""
 import base64
-from datetime import datetime
-
 import requests
 from connectors.cyops_utilities.builtins import create_file_from_string
 from connectors.core.connector import get_logger, ConnectorError
@@ -71,7 +76,7 @@ class TAXIIFeed(object):
             logger.exception('{}'.format(e))
             raise ConnectorError('{}'.format(e))
 
-    def get_api_root_information(self, endpoint):
+    def get_api_root_information(self, endpoint, **kwargs):
         api_root = self.make_request(endpoint=self.server_url + endpoint, headers={'Content-Type': 'application/json'})
         try:
             resp = api_root['api_roots'][0]
@@ -87,7 +92,7 @@ def get_params(params):
     return params
 
 
-def get_output_schema(config, params, *args, **kwargs):
+def get_output_schema(config, params, **kwargs):
     if params.get('file_response'):
         return ({
             "md5": "",
@@ -121,9 +126,9 @@ def get_output_schema(config, params, *args, **kwargs):
         })
 
 
-def get_collections(config, params):
+def get_collections(config, params, **kwargs):
     taxii = TAXIIFeed(config)
-    api_root = taxii.get_api_root_information(endpoint='taxii2/')
+    api_root = taxii.get_api_root_information(endpoint='taxii2/', **kwargs)
     response_headers = taxii.make_request(endpoint=api_root, api_info='api_root_info')
     headers = {'Accept': response_headers['Content-Type']}
     params = {k: v for k, v in params.items() if v is not None and v != ''}
@@ -138,9 +143,9 @@ def get_collections(config, params):
         return {'collections': [response]}
 
 
-def get_objects_by_collection_id(config, params):
+def get_objects_by_collection_id(config, params, **kwargs):
     taxii = TAXIIFeed(config)
-    api_root = taxii.get_api_root_information(endpoint='taxii2/')
+    api_root = taxii.get_api_root_information(endpoint='taxii2/', **kwargs)
     response_headers = taxii.make_request(endpoint=api_root, api_info='api_root_info')
     headers = {'Accept': response_headers['Content-Type']}
     params = get_params(params)
@@ -169,10 +174,10 @@ def get_objects_by_collection_id(config, params):
         return deduped_indicators
 
 
-def _check_health(config):
+def _check_health(config, **kwargs):
     try:
         taxii = TAXIIFeed(config)
-        res = taxii.get_api_root_information(endpoint='taxii2/')
+        res = taxii.get_api_root_information(endpoint='taxii2/', **kwargs)
         if res:
             logger.info('connector available')
             return True
