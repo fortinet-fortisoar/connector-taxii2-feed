@@ -1,10 +1,9 @@
 """
 Copyright start
-Copyright (C) 2008 - 2023 Fortinet Inc.
-All rights reserved.
-FORTINET CONFIDENTIAL & FORTINET PROPRIETARY SOURCE CODE
-Copyright end
+MIT License
+Copyright (c) 2024 Fortinet Inc Copyright end
 """
+
 import base64
 import requests
 from connectors.cyops_utilities.builtins import create_file_from_string
@@ -155,7 +154,17 @@ def get_objects_by_collection_id(config, params, **kwargs):
     try:
         response = taxii.make_request(endpoint=api_root + '/collections/' + str(params['collectionID']) + '/objects',
                                       params=query_params, headers=headers)
-        response = response.get("objects", [])
+        if params.get('fetch_all_records'):
+            result = response
+            next_key = response.get('next')
+            while next_key:
+                response = taxii.make_request(endpoint=api_root + '/collections/' + str(params['collectionID']) + '/objects'+'?next={}'.format(next_key),
+                    params=query_params, headers=headers)
+                result['objects'].extend(response.get('objects'))
+                next_key = response.json().get('next')
+            response = result.get("objects", [])
+        else:    
+            response = response.get("objects", [])
         filtered_indicators = [indicator for indicator in response if indicator["type"] == "indicator"]
     except Exception as e:
         if mode == 'Create as Feed Records in FortiSOAR':

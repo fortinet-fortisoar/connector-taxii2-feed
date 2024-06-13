@@ -5,7 +5,7 @@
   "publisher": "Fortinet",
   "cs_approved": false,
   "cs_compatible": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "category": "Threat Intelligence",
   "icon_small_name": "small.png",
   "icon_large_name": "large.png",
@@ -13,7 +13,7 @@
   "ingestion_modes": [
     "scheduled"
   ],
-  "help_online": "https://docs.fortinet.com/document/fortisoar/1.0.0/taxii2-threat-intel-feed/568/taxii2-threat-intel-feed-v1-0-0",
+  "help_online": "",
   "configuration": {
     "fields": [
       {
@@ -159,6 +159,16 @@
               }
             ]
           }
+        },
+        {
+          "name": "fetch_all_records",
+          "title": "Fetch All Records",
+          "type": "checkbox",
+          "editable": true,
+          "visible": true,
+          "required": false,
+          "tooltip": "Select this option to retrieve all records from collection.",
+          "description": "Select this option to retrieve all records from collection."
         }
       ],
       "enabled": true
