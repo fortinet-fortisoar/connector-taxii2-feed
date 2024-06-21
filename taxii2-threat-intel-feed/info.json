@@ -13,7 +13,7 @@
   "ingestion_modes": [
     "scheduled"
   ],
-  "help_online": "",
+  "help_online": "https://docs.fortinet.com/document/fortisoar/1.0.1/taxii2-threat-intel-feed/880/taxii2-threat-intel-feed-v1-0-1",
   "configuration": {
     "fields": [
       {
@@ -24,7 +24,7 @@
         "type": "text",
         "name": "server_url",
         "placeholder": "https://api.xforce.ibmcloud.com/api/",
-        "description": "Review the server URL of the TAXII2 Threat Intelligence Feed server to which you will connect and retrieve data"
+        "description": "The server URL of the TAXII2 Threat Intelligence Feed server to connect and retrieve data."
       },
       {
         "title": "Username/API Key",
@@ -60,7 +60,7 @@
     {
       "operation": "get_collections",
       "title": "Get Collections",
-      "description": "Retrieves a list of public/private/shared collection resources to which the users have access from TAXII2 Threat Intelligence Feed, based on the collection ID you have specified.",
+      "description": "Retrieves a list of public, private, or shared collection resources from TAXII2 Threat Intelligence Feed based on the collection ID you have specified.",
       "category": "investigation",
       "annotation": "get_collections",
       "output_schema": {
@@ -84,7 +84,7 @@
           "editable": true,
           "type": "text",
           "tooltip": "The ID of the collection whose general information you want to retrieve from TAXII2 Threat Intelligence Feed",
-          "description": "The ID of the collection whose general information, such as ID, Title, Description, Can Read, Can Write, Media Types, etc. you want to retrieve from TAXII2 Threat Intelligence Feed"
+          "description": "Specify the ID of the collection whose general information, such as ID, Title, Description, Can Read, Can Write, and Media Types you want to retrieve from TAXII2 Threat Intelligence Feed."
         }
       ],
       "enabled": true
@@ -106,7 +106,7 @@
           "editable": true,
           "type": "text",
           "tooltip": "The ID of the collection whose general information such as ID, title, description, can_read, can_write, and media_types you want to retrieve from TAXII2 Threat Intel Feed",
-          "description": "The ID of the collection whose general information such as ID, title, description, can_read, can_write, and media_types you want to retrieve from TAXII2 Threat Intel Feed"
+          "description": "Specify the ID of the collection whose general information, such as ID, Title, Description, Can Read, Can Write, and Media Types you want to retrieve from TAXII2 Threat Intelligence Feed."
         },
         {
           "title": "Created After",
@@ -116,7 +116,7 @@
           "editable": true,
           "type": "datetime",
           "tooltip": "The Datetime using which you want to filter the result set to only include only those items that have been created after the specified time",
-          "description": "The Datetime using which you want to filter the result set to only include only those items that have been created after the specified time"
+          "description": "Select the date and time to filter the result set to include items that were created after the selected time."
         },
         {
           "title": "Process Response As",
@@ -132,7 +132,7 @@
           ],
           "value": "Create as Feed Records in FortiSOAR",
           "tooltip": "The Feed Data can either be returned as a JSON; written to a file on the FortiSOAR server; or Created as Feed Records in FortiSOAR",
-          "description": "Select the method of returning the Feed Data information. You can choose between the data being create as Feed records in FortiSOAR or returned in the JSON format (Return as a JSON) or being written to a file on the FortiSOAR server (Save to File). If you choose the 'Create as Feed Records in FortiSOAR' option, then in Record Creation Playbook IRI field, specify the IRI of the Create Record playbooks IRI, else if if you choose 'Save to File' option, then in the Filename field, specify the name of the file in which you want to save the feed information retrieved from IBM X-Force.",
+          "description": "Select the method of returning the Feed Data information. You can choose from following options: Create as Feed Records in FortiSOAR: Specify the IRI of the Record Creation Playbook in Record Creation Playbook IRI field. Save to File: Specify the name of the file, in which to save the feed information retrieved from IBM X-Force, in the Filename field. Return as a JSON: Select this option to receive feeds as a JSON object.",
           "onchange": {
             "Create as Feed Records in FortiSOAR": [
               {
@@ -168,7 +168,7 @@
           "visible": true,
           "required": false,
           "tooltip": "Select this option to retrieve all records from collection.",
-          "description": "Select this option to retrieve all records from collection."
+          "description": "(Optional) Select this option to retrieve all records from the specified collection."
         }
       ],
       "enabled": true

@@ -1,2 +1,2 @@
 #### What's Improved
-- Implemented functionality to retrieve all indicator records within a collection for the "Fetch Indicators" action.
+- A new parameter Fetch All Records under the action Fetch Indicators helps retrieve all indicator records within a collection.
