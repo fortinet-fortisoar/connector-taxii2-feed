@@ -8,7 +8,7 @@
       "visible": true,
       "image": null,
       "uuid": "0820fcd2-3424-4b4b-aae8-f7ac9b9463a9",
-      "id": 50,
+      "id": 449,
       "deletedAt": null,
       "importedBy": [],
       "recordTags": [],
@@ -26,7 +26,7 @@
           "remoteExecutableFlag": false,
           "parameters": [],
           "synchronous": false,
-          "lastModifyDate": 1681987384,
+          "lastModifyDate": 1719307084,
           "collection": "/api/3/workflow_collections/0820fcd2-3424-4b4b-aae8-f7ac9b9463a9",
           "versions": [],
           "triggerStep": "/api/3/workflow_steps/fa821678-c749-4932-835f-0aeb4364ddfb",
@@ -101,19 +101,21 @@
           "groups": [],
           "priority": null,
           "uuid": "20064d48-c19e-400f-9ec8-209699f6b345",
-          "id": 613,
+          "id": 5627,
           "owners": [],
           "isPrivate": false,
           "deletedAt": null,
           "importedBy": [],
-          "recordTags": []
+          "recordTags": [
+            "taxii2-threat-intel-feed"
+          ]
         },
         {
           "@type": "Workflow",
           "triggerLimit": null,
           "name": "> TAXII2 > Fetch and Create",
           "aliasName": null,
-          "tag": null,
+          "tag": "#TAXII2 Threat Intel Feed",
           "description": "Fetch and Create Indicators from TAXII2 Indicators Objects",
           "isActive": false,
           "debug": false,
@@ -321,7 +323,7 @@
           "groups": [],
           "priority": "/api/3/picklists/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
           "uuid": "36560d71-5aa0-4c35-b001-d2dc5086aac1",
-          "id": 614,
+          "id": 5628,
           "owners": [],
           "isPrivate": false,
           "deletedAt": null,
@@ -346,7 +348,7 @@
           "remoteExecutableFlag": false,
           "parameters": [],
           "synchronous": false,
-          "lastModifyDate": 1681983150,
+          "lastModifyDate": 1719307072,
           "collection": "/api/3/workflow_collections/0820fcd2-3424-4b4b-aae8-f7ac9b9463a9",
           "versions": [],
           "triggerStep": "/api/3/workflow_steps/ccd5b627-ada1-4934-ac08-1a253dcaf60e",
@@ -415,19 +417,21 @@
           "groups": [],
           "priority": null,
           "uuid": "b8f76bb3-378c-454f-9216-752130be80d7",
-          "id": 615,
+          "id": 5629,
           "owners": [],
           "isPrivate": false,
           "deletedAt": null,
           "importedBy": [],
-          "recordTags": []
+          "recordTags": [
+            "taxii2-threat-intel-feed"
+          ]
         },
         {
           "@type": "Workflow",
           "triggerLimit": null,
           "name": "TAXII2 > Ingest",
           "aliasName": null,
-          "tag": null,
+          "tag": "#TAXII2 Threat Intel Feed",
           "description": "Fetch Collections from Taxii2",
           "isActive": false,
           "debug": false,
@@ -654,7 +658,7 @@
           "groups": [],
           "priority": "/api/3/picklists/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
           "uuid": "bbb4c328-26e3-4117-90cf-69b713a2acaa",
-          "id": 616,
+          "id": 5630,
           "owners": [],
           "isPrivate": false,
           "deletedAt": null,
@@ -669,10 +673,10 @@
     }
   ],
   "exported_tags": [
+    "taxii2-threat-intel-feed",
     "dataingestion",
     "create",
     "fetch",
-    "taxii2-threat-intel-feed",
     "ingest"
   ]
 }
